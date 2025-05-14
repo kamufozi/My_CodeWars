@@ -1,26 +1,41 @@
-async function fetchFirstUserPostsWithRetries(){
-    let url = 'https://jsonplaceholder.typicode.com/users';
-    let pUrl= 'https://jsonplaceholder.typicode.com/posts?userId={userId}';
-    let user;
-    let posts=[];
-    try{
-    let parsed; 
-    let pParsed;   
-    for (let i=0; i<3;i++){
-     let response=await fetch(url);
-     parsed=await response.json();  
+async function fetchWithRetry(url, options = {}, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            if (attempt === retries) {
+                throw new Error(`Failed after ${retries} retries: ${error.message}`);
+            }
+        }
     }
-    for (let i=0; i<3;i++){
-        let response=await fetch(pUrl);
-        pParsed=await response.json();  
-       }
-    console.log(pParsed);   
-    user=parsed[0];
-    console.log(user);
-    }
-    catch(err){
-        console.log(err);
-    }
-  
 }
-fetchFirstUserPostsWithRetries();
+
+async function fetchFirstUserPostsWithRetries() {
+    const usersUrl = 'https://jsonplaceholder.typicode.com/users';
+    
+    try {
+        const users = await fetchWithRetry(usersUrl, {}, 3);
+        const firstUser = users[0];
+        const userId = firstUser.id;
+        
+        const postsUrl = `https://jsonplaceholder.typicode.com/posts?userId=${userId}`;
+        const posts = await fetchWithRetry(postsUrl, {}, 3);
+        
+        return {
+            user: firstUser,
+            posts: posts
+        };
+    } catch (error) {
+        console.error("Error fetching user or posts:", error.message);
+        throw error;
+    }
+}
+
+// Example usage
+fetchFirstUserPostsWithRetries()
+    .then(data => console.log(data))
+    .catch(err => console.error("Final Error:", err.message));
