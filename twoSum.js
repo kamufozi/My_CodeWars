@@ -15,4 +15,4 @@ function twoSum(numbers, target) {
             }
         }
     }
-    return [index1, index2];
+    return [index1, index2];}
