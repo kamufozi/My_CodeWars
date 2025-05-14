@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise Exercise - Async Recipe Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 200px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input, select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .recipe-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .status {
+            font-style: italic;
+            color: #666;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Async Recipe Finder</h1>
+    
+    <div class="container">
+        <h2>Exercise Goals:</h2>
+        <p>This exercise demonstrates JavaScript Promises through a recipe finder application. You'll work with:</p>
+        <ul>
+            <li>Creating and consuming Promises</li>
+            <li>Promise chaining</li>
+            <li>Error handling</li>
+            <li>Promise composition (all, race)</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Search Recipes</h2>
+        <div>
+            <input type="text" id="ingredient" placeholder="Enter main ingredient">
+            <select id="dietary">
+                <option value="">Any diet</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="gluten-free">Gluten-free</option>
+            </select>
+            <button id="searchBtn">Search</button>
+            <button id="randomBtn">I'm Feeling Lucky</button>
+        </div>
+        <p class="status" id="status"></p>
+    </div>
+
+    <div class="container">
+        <h2>Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <div class="container">
+        <h2>Your Tasks</h2>
+        <ol>
+            <li>Complete the <code>getRecipes</code> function to return a Promise</li>
+            <li>Implement proper error handling</li>
+            <li>Complete the <code>getRecipeDetails</code> function</li>
+            <li>Fix the <code>combineResults</code> function using Promise.all</li>
+            <li>Implement the "I'm Feeling Lucky" button with Promise.race</li>
+        </ol>
+    </div>
+
+    <script>
+        // Simulated recipe database
+        const recipeDatabase = {
+            chicken: [
+                { id: 1, name: "Grilled Chicken", diet: [""] },
+                { id: 2, name: "Chicken Parmesan", diet: [""] },
+                { id: 3, name: "Chicken Stir Fry", diet: ["gluten-free"] }
+            ],
+            beef: [
+                { id: 4, name: "Beef Stew", diet: [""] },
+                { id: 5, name: "Beef Tacos", diet: [""] }
+            ],
+            tofu: [
+                { id: 6, name: "Tofu Scramble", diet: ["vegetarian", "vegan"] },
+                { id: 7, name: "Tofu Stir Fry", diet: ["vegetarian", "vegan", "gluten-free"] }
+            ],
+            mushroom: [
+                { id: 8, name: "Mushroom Risotto", diet: ["vegetarian"] },
+                { id: 9, name: "Stuffed Mushrooms", diet: ["vegetarian", "gluten-free"] }
+            ],
+            lentils: [
+                { id: 10, name: "Lentil Soup", diet: ["vegetarian", "vegan", "gluten-free"] },
+                { id: 11, name: "Lentil Curry", diet: ["vegetarian", "vegan"] }
+            ]
+        };
+
+        // Recipe details
+        const recipeDetails = {
+            1: { prepTime: "20 min", cookTime: "15 min", difficulty: "Easy" },
+            2: { prepTime: "30 min", cookTime: "25 min", difficulty: "Medium" },
+            3: { prepTime: "15 min", cookTime: "10 min", difficulty: "Easy" },
+            4: { prepTime: "30 min", cookTime: "2 hours", difficulty: "Medium" },
+            5: { prepTime: "20 min", cookTime: "15 min", difficulty: "Easy" },
+            6: { prepTime: "10 min", cookTime: "10 min", difficulty: "Easy" },
+            7: { prepTime: "15 min", cookTime: "10 min", difficulty: "Easy" },
+            8: { prepTime: "10 min", cookTime: "25 min", difficulty: "Medium" },
+            9: { prepTime: "25 min", cookTime: "20 min", difficulty: "Medium" },
+            10: { prepTime: "15 min", cookTime: "30 min", difficulty: "Easy" },
+            11: { prepTime: "20 min", cookTime: "25 min", difficulty: "Medium" }
+        };
+
+        // TASK 1: Complete this function to return a Promise
+        function getRecipes(ingredient, diet) {
+            // TODO: Return a new Promise that:
+            // 1. Resolves with filtered recipes if ingredient exists in database
+            // 2. Rejects with an error if ingredient isn't found
+            // 3. Applies diet filter if diet parameter is provided
+            // 4. Simulates network delay with setTimeout (1-2 seconds)
+            
+            return new Promise((resolve, reject) => {
+                // Your code here
+                setTimeout(() => {
+                    if (!ingredient) {
+                        reject(new Error("Please enter an ingredient"));
+                        return;
+                    }
+                    
+                    const normalizedIngredient = ingredient.toLowerCase();
+                    if (!recipeDatabase[normalizedIngredient]) {
+                        reject(new Error(`No recipes found for ${ingredient}`));
+                        return;
+                    }
+                    
+                    let results = recipeDatabase[normalizedIngredient];
+                    
+                    if (diet) {
+                        results = results.filter(recipe => recipe.diet.includes(diet));
+                    }
+                    
+                    if (results.length === 0) {
+                        reject(new Error(`No ${diet} recipes found for ${ingredient}`));
+                        return;
+                    }
+                    
+                    resolve(results);
+                }, 1500); // 1.5 second delay
+            });
+        }
+
+        // TASK 3: Complete this function to fetch recipe details
+        function getRecipeDetails(recipeId) {
+            // TODO: Return a Promise that resolves with the details for the requested recipe
+            // or rejects if the recipe doesn't exist
+            
+            return new Promise((resolve, reject) => {
+                // Your code here
+                setTimeout(() => {
+                    if (recipeDetails[recipeId]) {
+                        resolve(recipeDetails[recipeId]);
+                    } else {
+                        reject(new Error(`Details for recipe ID ${recipeId} not found`));
+                    }
+                }, 1000);
+            });
+        }
+
+        // TASK 4: Fix this function to properly use Promise.all
+        function combineResults(recipes) {
+            // TODO: Use Promise.all to fetch details for all recipes
+            // and combine them into complete recipe objects
+            
+            const detailPromises = recipes.map(recipe => {
+                return getRecipeDetails(recipe.id)
+                    .then(details => {
+                        return {...recipe, ...details};
+                    });
+            });
+            
+            return Promise.all(detailPromises);
+        }
+
+        // Display results
+        function displayResults(recipes) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.innerHTML = `
+                    <h3>${recipe.name}</h3>
+                    <p><strong>Preparation time:</strong> ${recipe.prepTime}</p>
+                    <p><strong>Cooking time:</strong> ${recipe.cookTime}</p>
+                    <p><strong>Difficulty:</strong> ${recipe.difficulty}</p>
+                    <p><strong>Dietary:</strong> ${recipe.diet.length ? recipe.diet.join(', ') : 'None'}</p>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        // Search button handling
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const ingredient = document.getElementById('ingredient').value;
+            const diet = document.getElementById('dietary').value;
+            const statusElement = document.getElementById('status');
+            
+            statusElement.textContent = "Searching for recipes...";
+            
+            // TASK 2: Add proper error handling to this Promise chain
+            getRecipes(ingredient, diet)
+                .then(recipes => {
+                    statusElement.textContent = `Found ${recipes.length} recipes. Loading details...`;
+                    return combineResults(recipes);
+                })
+                .then(completeRecipes => {
+                    statusElement.textContent = `Loaded ${completeRecipes.length} recipes.`;
+                    displayResults(completeRecipes);
+                })
+                .catch(error => {
+                    statusElement.textContent = `Error: ${error.message}`;
+                    document.getElementById('results').innerHTML = 
+                        `<p>No recipes found. Try another ingredient or dietary preference.</p>`;
+                });
+        });
+
+        // TASK 5: Implement the "I'm Feeling Lucky" button using Promise.race
+        document.getElementById('randomBtn').addEventListener('click', function() {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = "Finding you a random recipe...";
+            
+            // TODO: Create an array of promises for different ingredients
+            // and use Promise.race to take the first one that resolves
+            const randomChoices = [
+                getRecipes('chicken', ''),
+                getRecipes('tofu', 'vegetarian'),
+                getRecipes('mushroom', ''),
+                getRecipes('lentils', 'vegan')
+            ];
+            
+            Promise.race(randomChoices)
+                .then(recipes => {
+                    // Pick one random recipe from the results
+                    const randomIndex = Math.floor(Math.random() * recipes.length);
+                    const selectedRecipe = recipes[randomIndex];
+                    statusElement.textContent = `Found a random recipe! Loading details...`;
+                    return getRecipeDetails(selectedRecipe.id)
+                        .then(details => ({...selectedRecipe, ...details}));
+                })
+                .then(completeRecipe => {
+                    statusElement.textContent = `Here's your random recipe!`;
+                    displayResults([completeRecipe]);
+                })
+                .catch(error => {
+                    statusElement.textContent = `Error: ${error.message}`;
+                    document.getElementById('results').innerHTML = 
+                        `<p>Couldn't find a random recipe. Please try again.</p>`;
+                });
+        });
+    </script>
+</body>
+</html>
