@@ -78,3 +78,28 @@
 //     // If we get here, all attempts failed
 //     throw lastError;
 // }
+// console.log('Start');
+
+// setTimeout(() => console.log('Timeout 1'), 0);
+
+// Promise.resolve().then(() => {
+//     console.log('Promise 1');
+//     return Promise.resolve();
+// }).then(() => {
+//     console.log('Promise 2');
+// });
+
+// setTimeout(() => console.log('Timeout 2'), 0);
+
+// Promise.resolve().then(() => {
+//     console.log('Promise 3');
+// });
+
+// console.log('End');
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+  console.log("hey")
+}
+
