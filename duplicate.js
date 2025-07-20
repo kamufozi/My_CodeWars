@@ -30,11 +30,11 @@
 // 2.2.1 loop through the chars so (split the string ✅ ) ✅
 
 // 2.3 for every small[i] I’m thinking of the filter method where we can write small[i] and check it against all other
-
+var mamamia = 'coco'
 function duplicateCount(text){
     
     let small = text.toLowerCase(); 
-    let count = 0;
+    var count = 0;
     small = small.split("")
     let filtered = new Set();
     for (let i = 0; i < small.length; i++ ){
@@ -47,3 +47,8 @@ function duplicateCount(text){
     }
     return(filtered.size)
 }
+function coco(){
+    var fofo = 3;
+    let keke = 64
+}
+console.log(fofo)
