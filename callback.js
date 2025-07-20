@@ -30,3 +30,28 @@ function count(){
     },1000)}
 }
 counter(count);
+
+function formatName(firstName, lastName, callback) {
+    // Your code here
+}
+function firstAndLast(firstName,lastName){
+    console.log(`${firstName} ${lastName}`)
+    return `${firstName} ${lastName}`
+}
+function lastCommaFirst(firstName,lastName){
+    console.log(`${lastName.toUpperCase()}, ${firstName}`)
+    return `${lastName.toUpperCase()}, ${firstName}`
+}
+function signature(firstName,lastName){
+    console.log(`${firstName[0]}. ${lastName}`)
+    return `${firstName[0]}. ${lastName}`
+}
+
+// Example usage:
+console.log(formatName("John", "Doe", firstAndLast("John","Doe")));
+console.log(formatName("John", "Doe", lastCommaFirst("John","Doe")));
+console.log(formatName("John", "Doe", signature("John","Doe")));
+// Expected outputs (with different callbacks):
+// "John Doe"
+// "DOE, John"
+// "J. Doe"
